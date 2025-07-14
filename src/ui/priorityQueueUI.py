@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
 from ..ds.priorityQueue import PriorityQueue
-from ..database.priorityQueue_dao import add_patient_to_db, get_all_patients, delete_all_patients
+from ..database.priorityQueue_dao import add_patient_to_db, get_all_patients
 
 class MainWindow:
     def __init__(self, root):
@@ -39,7 +39,7 @@ class MainWindow:
         tk.Button(mid_frame, text="Show Arrival Order", bg="#2980b9", fg="white", command=self.show_arrival_order).grid(row=0, column=0, padx=5)
         tk.Button(mid_frame, text="Show Priority Order", bg="#8e44ad", fg="white", command=self.show_priority_order).grid(row=0, column=1, padx=5)
         tk.Button(mid_frame, text="Clear Console", bg="#95a5a6", command=self.clear_console).grid(row=0, column=2, padx=5)
-        tk.Button(mid_frame, text="Clear All Records", bg="#c0392b", fg="white", command=self.clear_all).grid(row=0, column=3, padx=5)
+        # Removed "Clear All Records" button
 
         # --- Patient List Display ---
         tk.Label(list_frame, text="Patient Queue:").pack(anchor="w")
@@ -103,14 +103,6 @@ class MainWindow:
     def clear_console(self):
         self.log_box.delete("1.0", tk.END)
         self.log("🧹 Console cleared")
-
-    def clear_all(self):
-        if messagebox.askyesno("Confirm", "Delete all patients and clear the system?"):
-            self.queue.clear()
-            self.arrival_order.clear()
-            self.patient_list.delete(0, tk.END)
-            self.log("🗑 All patient records cleared")
-            delete_all_patients()  # remove from DB if implemented
 
     def update_display(self):
         self.show_arrival_order()
