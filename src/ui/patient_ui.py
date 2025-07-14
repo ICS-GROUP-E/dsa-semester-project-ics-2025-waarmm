@@ -3,6 +3,11 @@ import sys
 import os
 import tkinter as tk
 from tkinter import messagebox, ttk, scrolledtext
+import csv
+# Add this import at the top if not already present:
+from tkinter import filedialog
+
+
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ds')))
@@ -133,6 +138,38 @@ def display_all_patients():
         log("=================================")
         log(f"Count: {len(patients)}")
 
+
+# Export patients to CSV
+def export_to_csv():
+    patients = get_all_patients()
+    if not patients:
+        log("⚠️ No patients to export")
+        messagebox.showwarning("No Data", "There are no patients to export.")
+        return
+
+    filename = filedialog.asksaveasfilename(
+        defaultextension=".csv",
+        filetypes=[("CSV files", "*.csv")],
+        title="Save Patient Report As"
+    )
+
+    if not filename:
+        log("Export cancelled by user.")
+        return  # User cancelled the dialog
+
+    try:
+        with open(filename, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Patient ID", "Name", "Age", "Condition"])
+            for patient in patients:
+                writer.writerow(patient)
+        log(f"📁 Exported patient data to {filename}")
+        messagebox.showinfo("✅ Exported", f"Patient data exported to:\n{filename}")
+    except Exception as e:
+        log(f"❌ Error exporting CSV: {e}")
+        messagebox.showerror("❌ Export Failed", f"Could not export data: {e}")
+
+
 # Clear log button functionality
 def clear_log():
     output_box.delete(1.0, tk.END)
@@ -262,6 +299,9 @@ btn_clear_fields = create_styled_button(buttons_frame, "Clear Fields", clear_ent
 
 # Clear log button
 btn_clear_log = create_styled_button(buttons_frame, "Clear Log", clear_log, '#95a5a6', '#aeb6bf', 1, 2)
+
+# Export CSV Report button
+btn_export_csv = create_styled_button(buttons_frame, "Export CSV Report", export_to_csv, '#34495e', '#5d6d7e', 2, 0, columnspan=3)
 
 # --- Log section --- 
 
