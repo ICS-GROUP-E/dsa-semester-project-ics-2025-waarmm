@@ -1,42 +1,53 @@
 import sqlite3
 import os
 
-DB_PATH = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "hospital.db"))
+# Define the database path
+DB_PATH = os.path.join(os.path.dirname(__file__), "hospital.db")
 
-conn = sqlite3.connect(DB_PATH)
-cursor = conn.cursor()
+def get_connection():
+    return sqlite3.connect(DB_PATH)
 
 def init_db():
-
+    conn = get_connection()
+    cursor = conn.cursor()
     cursor.execute("""
         CREATE TABLE IF NOT EXISTS patients (
-            id TEXT PRIMARY KEY,
-            name TEXT,
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            name TEXT NOT NULL,
             age INTEGER,
-            condition TEXT
+            condition TEXT,
+            priority INTEGER NOT NULL,
+            timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
         )
     """)
-
     conn.commit()
+    conn.close()
 
-
-def insert_patient_to_db(patient):
-    sql = """
-        INSERT OR REPLACE INTO patients (id, name, age, condition)
+def insert_patient(name, age, condition, priority):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        INSERT INTO patients (name, age, condition, priority)
         VALUES (?, ?, ?, ?)
-    """
-    cursor.execute(sql, (patient.id, patient.name, patient.age, patient.condition))
+    """, (name, age, condition, priority))
     conn.commit()
+    conn.close()
 
+def get_all_patients_sorted():
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT id, name, age, condition, priority, timestamp
+        FROM patients
+        ORDER BY priority ASC, timestamp ASC
+    """)
+    patients = cursor.fetchall()
+    conn.close()
+    return patients
 
-def delete_patient_from_db(patient_id):
-    sql = """
-        DELETE FROM patients WHERE id = ?
-    """
-    cursor.execute(sql, (patient_id, ))
+def delete_patient(patient_id):
+    conn = get_connection()
+    cursor = conn.cursor()
+    cursor.execute("DELETE FROM patients WHERE id = ?", (patient_id,))
     conn.commit()
-
-
-def get_all_patients():
-    cursor.execute("SELECT id, name, age, condition FROM patients")
-    return cursor.fetchall()
+    conn.close()
