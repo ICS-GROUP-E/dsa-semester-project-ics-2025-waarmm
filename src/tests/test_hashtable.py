@@ -4,7 +4,7 @@ import pytest
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ds')))
 
-from hashtable_patients import HashTable, Patient
+from ..ds.hashtable_patients import HashTable, Patient
 
 @pytest.fixture
 def hashtable():
