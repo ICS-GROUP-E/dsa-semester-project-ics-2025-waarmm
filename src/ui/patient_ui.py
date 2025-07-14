@@ -7,8 +7,8 @@ from tkinter import messagebox, ttk, scrolledtext
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'database')))
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'ds')))
 
-from hashtable_patients import HashTable, Patient
-from db_connection import (
+from ..ds.hashtable_patients import HashTable, Patient
+from ..database.db_connection import (
     insert_patient_to_db,
     delete_patient_from_db,
     get_all_patients,
