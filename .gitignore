@@ -1,0 +1,23 @@
+# Ignore Python cache files
+__pycache__/
+*.py[cod]
+
+# Ignore database file
+hospital.db
+
+# Ignore virtual environments
+.env/
+.venv/
+env/
+venv/
+
+# Ignore VS Code or PyCharm configs
+.vscode/
+.idea/
+
+# OS-specific
+.DS_Store
+
+# Test and build caches
+.pytest_cache/
+*.log
