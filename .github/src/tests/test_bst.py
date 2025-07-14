@@ -6,7 +6,7 @@ import pytest
 
 # ✅ Add src/ds to the system path to allow import
 current_dir = os.path.dirname(__file__)
-ds_path = os.path.abspath(os.path.join(current_dir, '..', 'src', 'ds'))
+ds_path = os.path.abspath(os.path.join(current_dir, '..', 'ds'))
 
 print(f"Test current directory: {current_dir}")
 print(f"DS path: {ds_path}")
