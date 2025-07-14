@@ -1,7 +1,11 @@
 import tkinter as tk
-from tkinter import messagebox, scrolledtext
+from tkinter import messagebox, scrolledtext, filedialog
+import datetime
+import csv
+
 from ..ds.priorityQueue import PriorityQueue
 from ..database.priorityQueue_dao import add_patient_to_db, get_all_patients
+
 
 class MainWindow:
     def __init__(self, root):
@@ -39,7 +43,7 @@ class MainWindow:
         tk.Button(mid_frame, text="Show Arrival Order", bg="#2980b9", fg="white", command=self.show_arrival_order).grid(row=0, column=0, padx=5)
         tk.Button(mid_frame, text="Show Priority Order", bg="#8e44ad", fg="white", command=self.show_priority_order).grid(row=0, column=1, padx=5)
         tk.Button(mid_frame, text="Clear Console", bg="#95a5a6", command=self.clear_console).grid(row=0, column=2, padx=5)
-        # Removed "Clear All Records" button
+        tk.Button(mid_frame, text="Export to CSV", bg="#34495e", fg="white", command=self.export_to_csv).grid(row=0, column=3, padx=5)
 
         # --- Patient List Display ---
         tk.Label(list_frame, text="Patient Queue:").pack(anchor="w")
@@ -51,14 +55,16 @@ class MainWindow:
         self.log_box = scrolledtext.ScrolledText(log_frame, height=10, bg="#2c3e50", fg="#ecf0f1")
         self.log_box.pack(fill="both", expand=True)
 
-        self.arrival_order = []  # list to keep track of arrival order
+        self.arrival_order = []  # [(name, priority, timestamp)]
         self.update_display()
 
     def log(self, message):
+        """ Append messages to console log box """
         self.log_box.insert(tk.END, message + "\n")
         self.log_box.see(tk.END)
 
     def add_patient(self):
+        """ Handle patient input, validate and insert into queue """
         name = self.name_entry.get().strip()
         try:
             priority = int(self.priority_entry.get())
@@ -68,15 +74,18 @@ class MainWindow:
             messagebox.showerror("Invalid Input", "Enter a name and a priority (1-5).")
             return
 
+        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         self.queue.insert(name, priority)
-        self.arrival_order.append((name, priority))  # add to arrival list
-        add_patient_to_db(name, priority)  # persist to DB
+        self.arrival_order.append((name, priority, timestamp))  # now includes timestamp
+        add_patient_to_db(name, priority)
+
         self.name_entry.delete(0, tk.END)
         self.priority_entry.delete(0, tk.END)
-        self.log(f"✅ Added: {name} (Priority {priority})")
-        self.show_arrival_order()  # update display
+        self.log(f"✅ Added: {name} (Priority {priority}) at {timestamp}")
+        self.show_arrival_order()
 
     def serve_patient(self):
+        """ Remove highest priority patient from queue """
         patient = self.queue.remove_highest_priority()
         if patient:
             self.log(f"🚑 Serving {patient.name} (Priority {patient.priority})")
@@ -86,19 +95,45 @@ class MainWindow:
             messagebox.showinfo("Queue Empty", "No patients in the queue.")
 
     def show_arrival_order(self):
+        """ Display patients in order they were added """
         self.patient_list.delete(0, tk.END)
         self.log("👥 Showing in Arrival Order")
-        for i, (name, priority) in enumerate(self.arrival_order, 1):
-            entry = f"{i:>2}. {name:<15} Priority: {priority}"
+        for i, (name, priority, timestamp) in enumerate(self.arrival_order, 1):
+            entry = f"{i:>2}. {name:<15} Priority: {priority}  Time: {timestamp}"
             self.patient_list.insert(tk.END, entry)
 
     def show_priority_order(self):
+        """ Display patients sorted by priority """
         self.patient_list.delete(0, tk.END)
         self.log("🔢 Showing in Priority Order")
         sorted_patients = sorted(self.arrival_order, key=lambda x: x[1])  # sort by priority
-        for i, (name, priority) in enumerate(sorted_patients, 1):
-            entry = f"{i:>2}. {name:<15} Priority: {priority}"
+        for i, (name, priority, timestamp) in enumerate(sorted_patients, 1):
+            entry = f"{i:>2}. {name:<15} Priority: {priority}  Time: {timestamp}"
             self.patient_list.insert(tk.END, entry)
+
+    def export_to_csv(self):
+        """ Export the patient arrival list to a CSV file """
+        if not self.arrival_order:
+            messagebox.showinfo("No Data", "No patient records to export.")
+            return
+
+        file_path = filedialog.asksaveasfilename(defaultextension=".csv",
+                                                 filetypes=[("CSV Files", "*.csv")],
+                                                 title="Save Report As")
+        if not file_path:
+            return  # User cancelled
+
+        try:
+            with open(file_path, mode='w', newline='', encoding='utf-8') as file:
+                writer = csv.writer(file)
+                writer.writerow(["Name", "Priority", "Timestamp"])
+                for name, priority, timestamp in self.arrival_order:
+                    writer.writerow([name, priority, timestamp])
+            self.log(f"📄 Report saved to {file_path}")
+            messagebox.showinfo("Export Successful", f"Report saved to:\n{file_path}")
+        except Exception as e:
+            self.log(f"❌ Error exporting report: {str(e)}")
+            messagebox.showerror("Export Failed", f"An error occurred:\n{str(e)}")
 
     def clear_console(self):
         self.log_box.delete("1.0", tk.END)
@@ -108,7 +143,7 @@ class MainWindow:
         self.show_arrival_order()
 
 
-# To run the UI directly
+# Run the app if this file is executed directly
 if __name__ == "__main__":
     root = tk.Tk()
     app = MainWindow(root)
