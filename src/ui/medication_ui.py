@@ -14,7 +14,7 @@ def add_med():
     date = entry_date.get()
 
     if pid and name and dose and date:
-        med_manager.addMedication(pid, name, dose, date)
+        med_manager.add_medication(pid, name, dose, date)
         log_output.insert(tk.END, f"✔ Added: {name} ({dose}) on {date}\n")
     else:
         messagebox.showwarning("Missing info", "Please fill in all fields.")
@@ -24,7 +24,7 @@ def del_med():
     name = entry_name.get()
 
     if pid and name:
-        med_manager.deleteMedication(pid, name)
+        med_manager.delete_medication(pid, name)
         log_output.insert(tk.END, f"❌ Deleted: {name} for {pid}\n")
     else:
         messagebox.showwarning("Missing info", "Patient ID and Medication Name required.")
@@ -32,10 +32,10 @@ def del_med():
 def show_history():
     pid = entry_pid.get().strip()
     if pid:
-        meds = med_manager.showMedicationHistory(pid)
+        meds = med_manager.show_medication_history(pid)
         log_output.insert(tk.END, f"\n📜 History for {pid}:\n")
     else:
-        meds = med_manager.showMedicationHistory()
+        meds = med_manager.show_medication_history()
         log_output.insert(tk.END, f"\n📜 Full Medication History:\n")
 
     for med in meds:

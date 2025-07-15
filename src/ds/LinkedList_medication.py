@@ -11,7 +11,7 @@ class MedicationHistory:
     def __init__(self):
         self.head = None
 
-    def addMedication(self, patient_id, med_name, dosage, date):
+    def add_medication(self, patient_id, med_name, dosage, date):
         new_node = MedicationNode(med_name, dosage, date)
         if self.head is None:
             self.head = new_node
@@ -29,7 +29,7 @@ class MedicationHistory:
         conn.close()
         print(f"[LOG] Medication added for {patient_id}: {med_name}")
 
-    def deleteMedication(self, patient_id, med_name):
+    def delete_medication(self, patient_id, med_name):
         previous_node = None
         current_node = self.head
         while current_node:
@@ -50,7 +50,7 @@ class MedicationHistory:
         conn.close()
         print(f"[LOG] Medication '{med_name}' deleted for {patient_id}")
 
-    def showMedicationHistory(self, patient_id=None):
+    def show_medication_history(self, patient_id=None):
         conn = get_connection()
         cursor = conn.cursor()
 

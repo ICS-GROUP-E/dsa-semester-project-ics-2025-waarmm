@@ -15,6 +15,6 @@ def init_db():
     ''')
     conn.commit()
     conn.close()
-    print("✅ medication_history table created!")
+    print("✅Medication_history table created!")
 
 init_db()
