@@ -32,8 +32,8 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 
 class DoctorLookupTab(ttk.Frame):
-    def _init_(self, parent):
-        super()._init_(parent)
+    def __init__(self, parent):
+        super().__init__(parent)
 
         self.result_listbox = None
         self.specialty_entry = None

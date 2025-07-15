@@ -6,8 +6,8 @@ from src.ds.LinkedList_medication import MedicationHistory
 
 
 class MedicationTab(tk.Frame):
-    def _init_(self, parent):
-        super()._init_(parent)
+    def __init__(self, parent):
+        super().__init__(parent)
 
         # Initialize the data structure
         self.log_output = None

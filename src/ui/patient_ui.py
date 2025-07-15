@@ -15,8 +15,8 @@ from src.database.db_connection import (
 )
 
 class PatientTab(ttk.Frame):
-    def _init_(self, parent, *args, **kwargs):
-        super()._init_(parent, *args, **kwargs)
+    def __init__(self, parent, *args, **kwargs):
+        super().__init__(parent, *args, **kwargs)
 
         # DB setup
         init_db()

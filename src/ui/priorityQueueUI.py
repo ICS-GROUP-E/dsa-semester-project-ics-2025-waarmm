@@ -9,8 +9,8 @@ from src.database.priorityQueue_dao import add_patient_to_db, get_all_patients
 
 
 class PriorityQueueTab(ttk.Frame):
-    def _init_(self, parent):
-        super()._init_(parent)
+    def __init__(self, parent):
+        super().__init__(parent)
         self.queue = PriorityQueue()
 
         # UI Frames

@@ -9,8 +9,8 @@ from src.ds.queue_appointments import AppointmentQueue
 
 
 class AppointmentTab(ttk.Frame):
-    def _init_(self, parent):
-        super()._init_(parent)
+    def __init__(self, parent):
+        super().__init__(parent)
         self.log_box = None
         self.queue_listbox = None
         self.name_entry = None
