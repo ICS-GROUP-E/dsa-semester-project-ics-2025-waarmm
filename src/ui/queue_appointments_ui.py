@@ -2,30 +2,36 @@ import tkinter as tk
 from tkinter import messagebox, scrolledtext, filedialog
 import csv
 import datetime
+from tkinter import ttk
 import os
 
 from src.ds.queue_appointments import AppointmentQueue
 
 
-class AppointmentQueueApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("📋 Appointment Queue System")
-        self.root.geometry("700x500")
+class AppointmentTab(ttk.Frame):
+    def _init_(self, parent):
+        super()._init_(parent)
+        self.log_box = None
+        self.queue_listbox = None
+        self.name_entry = None
         self.queue = AppointmentQueue()
         self.arrival_order = []  # [(name, timestamp)]
 
+        self.setup_ui()
+
+    def setup_ui(self):
+
         # --- UI Frames ---
-        top_frame = tk.Frame(root, padx=20, pady=10)
+        top_frame = tk.Frame(self, padx=20, pady=10)
         top_frame.pack(fill="x")
 
-        btn_frame = tk.Frame(root, padx=20, pady=10)
+        btn_frame = tk.Frame(self, padx=20, pady=10)
         btn_frame.pack(fill="x")
 
-        list_frame = tk.Frame(root, padx=20, pady=10)
+        list_frame = tk.Frame(self, padx=20, pady=10)
         list_frame.pack(fill="both", expand=True)
 
-        log_frame = tk.Frame(root, padx=20, pady=10)
+        log_frame = tk.Frame(self, padx=20, pady=10)
         log_frame.pack(fill="both", expand=True)
 
         # --- Top Input ---
@@ -36,18 +42,18 @@ class AppointmentQueueApp:
         tk.Button(top_frame, text="➕ Add Patient", bg="#27ae60", fg="white",
                   command=self.add_patient).grid(row=0, column=2, padx=10)
 
-        tk.Button(top_frame, text="⏭️ Serve Next", bg="#e67e22", fg="white",
+        tk.Button(top_frame, text="⏭ Serve Next", bg="#e67e22", fg="white",
                   command=self.serve_patient).grid(row=0, column=3, padx=10)
 
         # --- Buttons ---
-        tk.Button(btn_frame, text="⬇️ Export Queue to CSV", bg="#34495e", fg="white",
+        tk.Button(btn_frame, text="⬇ Export Queue to CSV", bg="#34495e", fg="white",
                   command=self.export_to_csv).grid(row=0, column=0, padx=5)
 
         tk.Button(btn_frame, text="🧹 Clear Console", bg="#95a5a6", fg="black",
                   command=self.clear_console).grid(row=0, column=1, padx=5)
 
         # --- Queue Display ---
-        tk.Label(list_frame, text="🧑‍⚕️ Current Queue:").pack(anchor="w")
+        tk.Label(list_frame, text="🧑‍⚕ Current Queue:").pack(anchor="w")
         self.queue_listbox = tk.Listbox(list_frame, height=8, font=('Courier', 10))
         self.queue_listbox.pack(fill="both", expand=True, pady=(0, 10))
 
@@ -84,7 +90,7 @@ class AppointmentQueueApp:
             self.update_display()
         else:
             messagebox.showinfo("Queue Empty", "No patients to serve.")
-            self.log("⚠️ Tried to serve, but queue was empty.")
+            self.log("⚠ Tried to serve, but queue was empty.")
 
     def update_display(self):
         self.queue_listbox.delete(0, tk.END)
@@ -118,10 +124,3 @@ class AppointmentQueueApp:
     def clear_console(self):
         self.log_box.delete("1.0", tk.END)
         self.log("🧹 Console cleared")
-
-
-# ✅ Entry point to run standalone
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = AppointmentQueueApp(root)
-    root.mainloop()

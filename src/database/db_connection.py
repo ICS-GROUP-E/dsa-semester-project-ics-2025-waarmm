@@ -1,6 +1,6 @@
 import sqlite3
 import os
-regNo_P191231_LinkedList
+
 def get_connection():
     base_dir = os.path.dirname(os.path.abspath(__file__))
     db_path = os.path.join(base_dir, "../../hospital.db")
@@ -45,4 +45,3 @@ def delete_patient_from_db(patient_id):
 def get_all_patients():
     cursor.execute("SELECT id, name, age, condition FROM patients")
     return cursor.fetchall()
-  main

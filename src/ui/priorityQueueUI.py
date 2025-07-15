@@ -1,30 +1,29 @@
 import tkinter as tk
 from tkinter import messagebox, scrolledtext, filedialog
+from tkinter import ttk
 import datetime
 import csv
 
-from ..ds.priorityQueue import PriorityQueue
-from ..database.priorityQueue_dao import add_patient_to_db, get_all_patients
+from src.ds.priorityQueue import PriorityQueue
+from src.database.priorityQueue_dao import add_patient_to_db, get_all_patients
 
 
-class MainWindow:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("Hospital Priority Queue System")
-        self.root.geometry("700x500")
+class PriorityQueueTab(ttk.Frame):
+    def _init_(self, parent):
+        super()._init_(parent)
         self.queue = PriorityQueue()
 
         # UI Frames
-        top_frame = tk.Frame(root, padx=20, pady=10)
+        top_frame = tk.Frame(self, padx=20, pady=10)
         top_frame.pack(fill="x")
 
-        mid_frame = tk.Frame(root, padx=20, pady=10)
+        mid_frame = tk.Frame(self, padx=20, pady=10)
         mid_frame.pack(fill="x")
 
-        list_frame = tk.Frame(root, padx=20, pady=10)
+        list_frame = tk.Frame(self, padx=20, pady=10)
         list_frame.pack(fill="both", expand=True)
 
-        log_frame = tk.Frame(root, padx=20, pady=10)
+        log_frame = tk.Frame(self, padx=20, pady=10)
         log_frame.pack(fill="both", expand=True)
 
         # --- Top Input Form ---
@@ -141,10 +140,3 @@ class MainWindow:
 
     def update_display(self):
         self.show_arrival_order()
-
-
-# Run the app if this file is executed directly
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = MainWindow(root)
-    root.mainloop()

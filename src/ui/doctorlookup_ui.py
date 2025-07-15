@@ -2,10 +2,11 @@ import tkinter as tk
 from tkinter import messagebox, filedialog
 import logging
 import sys
-import os
 import csv
 import datetime
 from pathlib import Path
+
+from tkinter import ttk
 
 # --- Path Setup ---
 base_dir = Path(__file__).resolve().parent
@@ -30,11 +31,13 @@ except ImportError:
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(message)s")
 
 
-class DoctorLookupApp:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("🩺 Doctor Lookup System")
-        self.root.configure(bg="#f5f5f5")
+class DoctorLookupTab(ttk.Frame):
+    def _init_(self, parent):
+        super()._init_(parent)
+
+        self.result_listbox = None
+        self.specialty_entry = None
+        self.name_entry = None
         self.tree = DoctorBST()
 
         try:
@@ -46,11 +49,14 @@ class DoctorLookupApp:
             logging.error(f"Database initialization error: {e}")
             messagebox.showerror("Database Error", str(e))
 
-        self.create_widgets()
+        self.setup_ui()
 
-    def create_widgets(self):
+    def setup_ui(self):
+
+        self.configure(padding=20)
+
         # --- Main Frame ---
-        main_frame = tk.Frame(self.root, padx=20, pady=20, bg="#f5f5f5")
+        main_frame = tk.Frame(self, bg="#f5f5f5")
         main_frame.pack(fill="both", expand=True)
 
         # --- Entry Frame ---
@@ -72,7 +78,7 @@ class DoctorLookupApp:
         btn_style = {"width": 16, "font": ("Segoe UI", 9)}
         tk.Button(button_frame, text="➕ Add Doctor", command=self.add_doctor, **btn_style).pack(pady=2)
         tk.Button(button_frame, text="🔍 Search", command=self.search_doctor, **btn_style).pack(pady=2)
-        tk.Button(button_frame, text="✏️ Update", command=self.update_doctor, **btn_style).pack(pady=2)
+        tk.Button(button_frame, text="✏ Update", command=self.update_doctor, **btn_style).pack(pady=2)
         tk.Button(button_frame, text="❌ Delete", command=self.delete_doctor, **btn_style).pack(pady=2)
         tk.Button(button_frame, text="📋 Show All", command=self.display_all, **btn_style).pack(pady=2)
         tk.Button(button_frame, text="🧹 Clear Fields", command=self.clear_entries, **btn_style).pack(pady=2)
@@ -90,7 +96,7 @@ class DoctorLookupApp:
         self.result_listbox.config(yscrollcommand=scrollbar.set)
 
         # --- Status Bar ---
-        self.status_label = tk.Label(self.root, text="Ready", anchor="w", bg="#e0e0e0", font=("Segoe UI", 9))
+        self.status_label = tk.Label(self, text="Ready", anchor="w", bg="#e0e0e0", font=("Segoe UI", 9))
         self.status_label.pack(fill="x")
 
         self.display_all()
@@ -224,10 +230,3 @@ class DoctorLookupApp:
         except Exception as e:
             logging.error(f"Export Error: {e}")
             messagebox.showerror("Export Error", str(e))
-
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    root.geometry("800x600")
-    app = DoctorLookupApp(root)
-    root.mainloop()
